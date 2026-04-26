@@ -1,0 +1,63 @@
+[package]
+name    = "btc-market-reaction-engine"
+version = "0.1.0"
+edition = "2021"
+authors = ["Quantitative Systems Architect"]
+description = "Real-time BTC-driven market behavior analysis — deterministic statistical engine"
+
+[[bin]]
+name = "engine"
+path = "src/main.rs"
+
+[dependencies]
+# Async runtime
+tokio        = { version = "1.38", features = ["full"] }
+tokio-tungstenite = { version = "0.23", features = ["native-tls"] }
+
+# HTTP + WebSocket server
+axum         = { version = "0.7", features = ["ws"] }
+tower        = "0.4"
+tower-http   = { version = "0.5", features = ["cors", "trace"] }
+
+# Serialization
+serde        = { version = "1.0", features = ["derive"] }
+serde_json   = "1.0"
+
+# Numerics
+statrs       = "0.17"     # statistical distributions
+ndarray      = "0.15"     # matrix ops for correlation
+num-traits   = "0.2"
+
+# Concurrency
+dashmap      = "6.0"      # concurrent hashmap (per-coin state)
+crossbeam    = "0.8"      # lock-free channels
+parking_lot  = "0.12"     # fast RwLock
+
+# Time
+chrono       = { version = "0.4", features = ["serde"] }
+
+# Networking
+reqwest      = { version = "0.12", features = ["json", "rustls-tls"] }
+futures-util = "0.3"
+url          = "2.5"
+
+# Logging / tracing
+tracing         = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+# Config
+config       = "0.14"
+dotenvy      = "0.15"
+
+[dev-dependencies]
+criterion    = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name    = "analytics_bench"
+harness = false
+
+[profile.release]
+opt-level   = 3
+lto         = true
+codegen-units = 1
+panic       = "abort"
